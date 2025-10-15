@@ -1,39 +1,65 @@
-import Button from '@/components/Button';
-import { router } from 'expo-router';
-import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import Button from "@/components/Button";
+import { ProfileStorage } from "@/services/profileStorage";
+import { UserProfile } from "@/types/profile";
+import { router, useFocusEffect } from "expo-router";
+import React, { useCallback, useState } from "react";
+import { Image, StyleSheet, Text, View } from "react-native";
 
 export default function ProfileScreen() {
+  const [profile, setProfile] = useState<UserProfile>({
+    name: "Úsuario",
+    email: "usuario@email.com",
+  });
 
-    const handleEditProfile = () => {
-        router.push('/profile/edit-profile');
-    };
+  useFocusEffect(
+    useCallback(() => {
+      async function loadProfile() {
+        const savedProfile = await ProfileStorage.load();
+
+        if (savedProfile) {
+          setProfile(savedProfile);
+        }
+      }
+
+      loadProfile();
+    }, [])
+  );
+
+  const handleEditProfile = () => {
+    router.push("/profile/edit-profile");
+  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Meu Perfil</Text>
 
       {/* Foto padrão */}
-      <Image 
-      source={{ uri: 'https://github.com/i-davies.png'}} 
-      style={styles.profileImage} />
+      <Image
+        source={
+          profile.fileUri
+            ? { uri: profile.fileUri }
+            : { uri: "https://github.com/i-davies.png" }
+        }
+        /*source={{ uri: "https://github.com/i-davies.png" }}*/
+        style={styles.profileImage}
+      />
 
       {/* Informações do Perfil */}
       <View style={styles.profileInfo}>
         <View style={styles.infoItem}>
           <Text style={styles.infoLabel}>Nome:</Text>
-          <Text style={styles.infoValue}>Icaro Davies</Text>
+          <Text style={styles.infoValue}>{profile.name}</Text>
         </View>
-        
+
         <View style={styles.infoItem}>
           <Text style={styles.infoLabel}>Email:</Text>
-          <Text style={styles.infoValue}>idavies@gmail.com</Text>
+          <Text style={styles.infoValue}>{profile.email}</Text>
         </View>
       </View>
 
       {/* Botões */}
       <View style={styles.footer}>
-        <Button title='EDITAR PERFIL' onPress={handleEditProfile} />
+        <Button title="EDITAR PERFIL" onPress={handleEditProfile} />
       </View>
     </View>
   );
@@ -42,21 +68,21 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ffffff",
     padding: 20,
-    gap: 16
+    gap: 16,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 24
+    fontWeight: "bold",
+    marginBottom: 24,
   },
   footer: {
-      width: '100%',
-      gap:12,
-      paddingBottom: 40,
+    width: "100%",
+    gap: 12,
+    paddingBottom: 40,
   },
   profileImage: {
     width: 120,
@@ -64,7 +90,7 @@ const styles = StyleSheet.create({
     borderRadius: 60,
   },
   profileInfo: {
-    width: '100%',
+    width: "100%",
     marginBottom: 40,
   },
   infoItem: {
@@ -73,20 +99,19 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#666666',
+    fontWeight: "600",
+    color: "#666666",
     marginBottom: 5,
   },
   infoValue: {
     fontSize: 18,
-    fontWeight: '500',
-    color: '#333333',
+    fontWeight: "500",
+    color: "#333333",
     paddingVertical: 10,
     paddingHorizontal: 15,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: "#f8f8f8",
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: "#e0e0e0",
   },
-
 });
