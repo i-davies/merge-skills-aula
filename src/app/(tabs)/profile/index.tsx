@@ -55,6 +55,13 @@ export default function ProfileScreen() {
           <Text style={styles.infoLabel}>Email:</Text>
           <Text style={styles.infoValue}>{profile.email}</Text>
         </View>
+
+        {profile.location && (
+          <View style={styles.infoItem}>
+            <Text style={styles.infoLabel}>Localização:</Text>
+            <Text style={styles.infoValue}>{profile.location}</Text>
+          </View>
+        )}
       </View>
 
       {/* Botões */}

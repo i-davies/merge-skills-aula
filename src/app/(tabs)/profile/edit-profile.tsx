@@ -174,4 +174,56 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
   },
+  locationContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  locationInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: "#e0e0e0",
+    color: "#333333",
+  },
+  locationTextInput: {
+    flex: 1,
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    paddingRight: 8, // Espaço extra para o ícone
+    color: "#333333",
+  },
+  locationIconButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  locationIconButtonDisabled: {
+    opacity: 0.5,
+  },
+  spinningIcon: {
+    transform: [{ rotate: "45deg" }],
+  },
+  locationButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#2196F3",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#1565C0",
+  },
+  locationButtonDisabled: {
+    backgroundColor: "#cccccc",
+    borderColor: "#999999",
+  },
+  locationButtonText: {
+    fontSize: 20,
+    color: "#FFFFFF",
+  },
 });
