@@ -1,15 +1,26 @@
 import Button from "@/components/Button";
+import { LocationService } from "@/services/locationService";
 import { ProfileStorage } from "@/services/profileStorage";
 import { UserProfile } from "@/types/profile";
+import Octicons from "@expo/vector-icons/Octicons";
 import * as DocumentPicker from "expo-document-picker";
 import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useState } from "react";
-import { Image, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function EditProfileModal() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [fileUri, setFileUri] = useState<string | null>(null);
+  const [location, setLocation] = useState("");
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -20,12 +31,31 @@ export default function EditProfileModal() {
           setName(savedProfile.name);
           setEmail(savedProfile.email);
           setFileUri(savedProfile.fileUri || null);
+          setLocation(savedProfile.location || "");
         }
       }
 
       loadProfile();
     }, [])
   );
+
+  const detectLocation = async () => {
+    setIsLoadingLocation(true);
+
+    try {
+      const address = await LocationService.getCurrentLocation();
+
+      if (address) {
+        setLocation(address);
+      } else {
+        console.error("Não foi possível detectar sua localização.");
+      }
+    } catch (error) {
+      console.error("Erro ao detectar localização:", error);
+    } finally {
+      setIsLoadingLocation(false);
+    }
+  };
 
   const handlePickDocument = async () => {
     const result = await DocumentPicker.getDocumentAsync({
@@ -45,6 +75,7 @@ export default function EditProfileModal() {
       name: name.trim(),
       email: email.trim(),
       fileUri: fileUri || undefined,
+      location: location.trim() || undefined,
     };
 
     await ProfileStorage.save(updatedProfile);
@@ -89,6 +120,34 @@ export default function EditProfileModal() {
             keyboardType="email-address"
             autoCapitalize="none"
           />
+        </View>
+
+        <View style={styles.infoItem}>
+          <Text style={styles.infoLabel}>Localização:</Text>
+          <View style={styles.locationInputContainer}>
+            <TextInput
+              style={styles.locationTextInput}
+              value={location}
+              onChangeText={setLocation}
+              placeholder="Digite sua localização"
+              placeholderTextColor="#999999"
+            />
+            <TouchableOpacity
+              style={[
+                styles.locationIconButton,
+                isLoadingLocation && styles.locationIconButtonDisabled,
+              ]}
+              onPress={detectLocation}
+              disabled={isLoadingLocation}
+            >
+              <Octicons
+                name={isLoadingLocation ? "sync" : "location"}
+                size={24}
+                color={isLoadingLocation ? "#999999" : "#112437"}
+                style={isLoadingLocation && styles.spinningIcon}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
 
